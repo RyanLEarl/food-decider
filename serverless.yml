@@ -54,6 +54,12 @@ provider:
         - "secretsmanager:GetSecretValue"
       Resource:
         - !Sub arn:aws:secretsmanager:${self:provider.region}:${AWS::AccountId}:secret:${self:service}-*
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:GetRecords"
+        - "dynamodb:PutItem"
+      Resource:
+        - !Sub arn:aws:dynamodb:${self:provider.region}:${AWS::AccountId}:table/${self:service}-${self:provider.stage}-*
 functions:
   - ${file(cloudformation/functions.yml)}
 
