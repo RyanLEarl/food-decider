@@ -18,13 +18,6 @@ phases:
       - parseStackOutputAuth=${CODEBUILD_SRC_DIR}/buildspecs/helpers/parse-stack-outputs-auth.sh
       - chmod +x $parseStackOutput
       - chmod +x $parseStackOutputAuth
-  pre_build:
-    commands:
-      - echo "----- Preparing Python Layer ------"
-      - cd ${CODEBUILD_SRC_DIR}
-      - zip -r layer.zip python
-      - aws s3 cp layer.zip s3://${STACK_NAME}-${CURRENT_STAGE}
-      - aws lambda publish-layer-version --layer-name ${STACK_NAME}-${CURRENT_STAGE}-python --content S3Bucket=${STACK_NAME}-${CURRENT_STAGE},S3Key=layer.zip --compatible-runtimes python3.10
   build:
     commands:
       - echo "----- Running Build ------"
