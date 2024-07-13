@@ -1,4 +1,4 @@
-# <REPLACE_PROJECT_NAME>
+# food-decider
 
 ## Introduction
 Run npm install and then navigate to pipeline/readme for next steps

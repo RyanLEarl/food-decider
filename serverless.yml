@@ -1,4 +1,4 @@
-service: <REPLACE_PROJECT_NAME>
+service: food-decider
 
 frameworkVersion: '3'
 
@@ -16,7 +16,7 @@ provider:
   name: aws
   deploymentMethod: direct
   runtime: python3.10
-  region: us-east-1
+  region: us-west-2
   stage: ${opt:stage, self:custom.default_stage}
   stackName: ${self:service}-${opt:stage, self:custom.default_stage}
   versionFunctions: false
@@ -27,7 +27,7 @@ provider:
     Data Classification: Confidential
     Exposure: Internal
     Environment: ${opt:stage, self:custom.default_stage}
-    Created By: <REPLACE_NAME>
+    Created By: Ryan Earl
 
   logs:
     restApi:

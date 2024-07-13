@@ -1,8 +1,8 @@
 version: 0.2
 env:
   variables:
-    STACK_NAME: <REPLACE_PROJECT_NAME>
-    REGION: us-east-1
+    STACK_NAME: food-decider
+    REGION: us-west-2
 phases:
   install:
     runtime-versions:

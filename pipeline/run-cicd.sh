@@ -1,7 +1,7 @@
 #!/bin/bash
 RED=`tput setaf 1`
 RESET=`tput sgr0`
-REGION="us-east-1"
+REGION="us-west-2"
 
 name=$1
 type=$2
@@ -11,7 +11,7 @@ if [[ -n "$env" ]]; then
     echo "CICD BUIlD NAME:${name} && STAGE:${env}"
     aws cloudformation ${type}-stack --stack-name "${name}-${env}-cicd" --template-body file://./pipeline/template.yml \
     --parameters ParameterKey=GitHubRepo,ParameterValue="${name}" ParameterKey=GitHubBranch,ParameterValue="${env}" \
-    --profile default --region us-east-1 --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
+    --profile default --region us-west-2 --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
 else
     echo "${RED} Missing arguement --stage={env}${RESET}"
 fi

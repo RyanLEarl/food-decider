@@ -56,38 +56,3 @@ Resources:
       BillingMode: PAY_PER_REQUEST
       SSESpecification:
         SSEEnabled: true
-
-# *********************************************************** RDS ***********************************************************
-  # MyDBSubnetGroup:
-  #   Type: AWS::RDS::DBSubnetGroup
-  #   Properties:
-  #     DBSubnetGroupDescription: My DB Subnet Group
-  #     SubnetIds: 
-  #       - subnet-0715699ccc424cf71
-  #       - subnet-0dff553a0075a603f
-  #       - subnet-0267794ff09f459a3
-
-  # MyDBInstance:
-  #   Type: AWS::RDS::DBInstance
-  #   DependsOn: MyDBSubnetGroup
-  #   Properties:
-  #     DBSubnetGroupName: !Ref MyDBSubnetGroup
-  #     AllocatedStorage: 50
-  #     DBInstanceClass: db.t3.large
-  #     Engine: mysql
-  #     EngineVersion: 8.0.35
-  #     MasterUsername: admin
-  #     MasterUserPassword: password
-  #     DBName: ${self:custom.rdsName}${self:provider.stage}
-  #     VPCSecurityGroups:
-  #       - !Ref MyDBSecurityGroup
-  # MyDBSecurityGroup:
-  #   Type: AWS::EC2::SecurityGroup
-  #   Properties:
-  #     GroupDescription: Security group for RDS DB Instance
-  #     VpcId: vpc-0233576269adc49e1
-  #     SecurityGroupIngress:
-  #       - IpProtocol: tcp
-  #         FromPort: 3306
-  #         ToPort: 3306
-  #         CidrIp: 0.0.0.0/0
