@@ -1,0 +1,33 @@
+version: 0.2
+env:
+  variables:
+    STACK_NAME: <REPLACE_PROJECT_NAME>
+    REGION: us-east-1
+phases:
+  install:
+    runtime-versions:
+      python: latest
+    commands:
+      - npm install -g serverless@3
+      - npm install
+      - pip install --upgrade pip
+      - pip install numpy --upgrade
+      - apt-get update
+      - apt-get -y install jq
+      - parseStackOutput=${CODEBUILD_SRC_DIR}/buildspecs/helpers/parse-stack-outputs.sh
+      - parseStackOutputAuth=${CODEBUILD_SRC_DIR}/buildspecs/helpers/parse-stack-outputs-auth.sh
+      - chmod +x $parseStackOutput
+      - chmod +x $parseStackOutputAuth
+  pre_build:
+    commands:
+      - echo "----- Preparing Python Layer ------"
+      - cd ${CODEBUILD_SRC_DIR}
+      - zip -r layer.zip python
+      - aws s3 cp layer.zip s3://${STACK_NAME}-${CURRENT_STAGE}
+      - aws lambda publish-layer-version --layer-name ${STACK_NAME}-${CURRENT_STAGE}-python --content S3Bucket=${STACK_NAME}-${CURRENT_STAGE},S3Key=layer.zip --compatible-runtimes python3.10
+  build:
+    commands:
+      - echo "----- Running Build ------"
+      - cd ${CODEBUILD_SRC_DIR}
+      - npx serverless deploy --stage ${CURRENT_STAGE} --region ${REGION}
+      - aws cloudformation describe-stacks --stack-name ${STACK_NAME}-${CURRENT_STAGE} > ${CODEBUILD_SRC_DIR}/stack-outputs.json

@@ -1,0 +1,71 @@
+service: <REPLACE_PROJECT_NAME>
+
+frameworkVersion: '3'
+
+custom:
+  default_stage: dev
+  logLevel:
+    dev: "debug"
+    qa: "info"
+    preprod: "info"
+    prod: "error"
+  pandasLayer: arn:aws:lambda:us-west-2:336392948345:layer:AWSSDKPandas-Python310:16
+  rdsName: <REPLACE_RDS_NAME>
+
+provider:
+  name: aws
+  deploymentMethod: direct
+  runtime: python3.10
+  region: us-east-1
+  stage: ${opt:stage, self:custom.default_stage}
+  stackName: ${self:service}-${opt:stage, self:custom.default_stage}
+  versionFunctions: false
+  apiName: ${self:service}-${opt:stage, self:custom.default_stage}
+  
+  stackTags:
+    Project: ${self:service}
+    Data Classification: Confidential
+    Exposure: Internal
+    Environment: ${opt:stage, self:custom.default_stage}
+    Created By: <REPLACE_NAME>
+
+  logs:
+    restApi:
+      format: >-
+        { "requestId":"$context.requestId", "ip": "$context.identity.sourceIp", 
+        "userId":"$context.authorizer.userId", "user":"$context.authorizer.user", 
+        "store":"$context.authorizer.storeNumber", "requestTime":"$context.requestTime", 
+        "httpMethod":"$context.httpMethod", "resourcePath":"$context.resourcePath", 
+        "status":"$context.status", "protocol":"$context.protocol", "responseLength":"$context.responseLength" }
+
+  environment:
+    region: ${self:provider.region}
+    stage: ${self:provider.stage}
+    stackName: ${self:service}-${opt:stage, 'dev'}
+    SECRET_NAME: ${self:service}-instore-auth-${self:provider.stage}-secret
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+      Resource: !Sub arn:aws:lambda:${self:provider.region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}*
+    - Effect: "Allow"
+      Action:
+        - "secretsmanager:GetSecretValue"
+      Resource:
+        - !Sub arn:aws:secretsmanager:${self:provider.region}:${AWS::AccountId}:secret:${self:service}-*
+functions:
+  - ${file(cloudformation/functions.yml)}
+
+resources:
+  - ${file(cloudformation/resources.yml)}
+
+package:
+  individually: true
+  exclude:
+    - buildspecs/**
+    - front-end/**
+    - node_modules/**
+
+plugins:
+  - serverless-python-requirements

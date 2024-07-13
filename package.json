@@ -1,0 +1,18 @@
+{
+  "name": "<REPLACE_PROJECT_NAME>",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "node": "^20.14.0",
+    "serverless": "^3.39.0"
+  },
+  "scripts": {
+    "build-cicd": "bash ./pipeline/run-cicd.sh $npm_package_name create $npm_config_stage",
+    "update-cicd": "bash ./pipeline/run-cicd.sh $npm_package_name update $npm_config_stage",
+    "build-cicd-windows": "bash ./pipeline/run-cicd.sh %npm_package_name% create %npm_config_stage%",
+    "update-cicd-windows": "bash ./pipeline/run-cicd.sh %npm_package_name% update %npm_config_stage%"
+  },
+  "devDependencies": {
+    "serverless-python-requirements": "^6.1.0"
+  }
+}
