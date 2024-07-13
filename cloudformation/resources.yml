@@ -34,22 +34,30 @@ Resources:
   #     SourceArn: !Sub arn:aws:s3:::${self:service}-${self:provider.stage}
 
 # *********************************************************** DynamoDB ***********************************************************
-  CustomerMappingTable:
+  FoodOptionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: ${self:service}-${self:provider.stage}-customer-mapping
+      TableName: ${self:service}-${self:provider.stage}-food-options
       AttributeDefinitions:
-        - AttributeName: customer_id
+        - AttributeName: name
           AttributeType: S
-        - AttributeName: other_customer_id
+        - AttributeName: food_type
           AttributeType: S
+        - AttributeName: visited
+          AttributeType: B        
       KeySchema:
-        - AttributeName: customer_id
+        - AttributeName: name
           KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: other_customer_id-index
+        - IndexName: food_type-index
           KeySchema:
-            - AttributeName: other_customer_id
+            - AttributeName: food_type
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: visited-index
+          KeySchema:
+            - AttributeName: visited
               KeyType: HASH
           Projection:
             ProjectionType: ALL
