@@ -15,10 +15,12 @@ Resources:
         - AttributeName: name
           KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: food_type-index
+        - IndexName: food_type-visited-index
           KeySchema:
             - AttributeName: food_type
               KeyType: HASH
+            - AttributeName: visited
+              KeyType: RANGE
           Projection:
             ProjectionType: ALL
         - IndexName: visited-index
@@ -30,3 +32,85 @@ Resources:
       BillingMode: PAY_PER_REQUEST
       SSESpecification:
         SSEEnabled: true
+
+
+
+# *********************************************************** Rest API Gateway ***********************************************************
+  FoodDecider:
+    Type: AWS::ApiGateway::RestApi
+    Properties: 
+      Name: !Sub ${self:service}-${self:provider.stage}-food-decider
+      EndpointConfiguration: 
+        Types:
+          - REGIONAL
+  FoodDeciderApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    DependsOn: FoodDeciderDeployment
+    Properties: 
+      Enabled: true
+      Name: !Sub ${self:service}-${self:provider.stage}-food-decider-api-key
+      StageKeys:
+        - RestApiId: !Ref FoodDecider
+          StageName: dev
+  FoodDeciderDeployment: 
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: Method
+    Properties: 
+      RestApiId: !Ref FoodDecider
+      StageName: dev
+  FoodDeciderUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    DependsOn: FoodDeciderDeployment
+    Properties: 
+      ApiStages:
+        - ApiId: !Ref FoodDecider
+          Stage: dev
+      UsagePlanName: !Sub ${self:service}-${self:provider.stage}-food-decider-usage-plan
+
+  MethodExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: 
+                - apigateway.amazonaws.com
+                - lambda.amazonaws.com
+                - s3.amazonaws.com
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: "LambdaInvokePolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+
+  FoodDeciderUsagePlanApiKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties: 
+      KeyId: !Ref FoodDeciderApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref FoodDeciderUsagePlan
+  Method:
+    DependsOn: MethodExecutionRole
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: true
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Credentials: !GetAtt MethodExecutionRole.Arn
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join  
+          - ''
+          - - 'arn:aws:apigateway:us-west-2:lambda:path//2015-03-31/functions/'
+            - !Sub arn:aws:lambda:${self:provider.region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-example
+            - '/invocations'
+      ResourceId: !GetAtt FoodDecider.RootResourceId
+      RestApiId: !Ref FoodDecider
