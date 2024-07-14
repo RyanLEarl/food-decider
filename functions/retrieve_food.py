@@ -26,6 +26,9 @@ def handler(event, context):
     if food_type != 'ALL' and visited != 'ALL':
         query['KeyConditionExpression'] = Key('food_type').eq(food_type) & Key('visited').eq(visited)
         index_name = 'food_type-visited-index'
+    elif food_type != 'ALL':
+        query['KeyConditionExpression'] = Key('food_type').eq(food_type)
+        index_name = 'food_type-index'
     elif visited != 'ALL':
         query['KeyConditionExpression'] = Key('visited').eq(visited)
         index_name = 'visited-index'
