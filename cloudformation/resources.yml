@@ -110,7 +110,7 @@ Resources:
         Uri: !Join  
           - ''
           - - 'arn:aws:apigateway:us-west-2:lambda:path//2015-03-31/functions/'
-            - !Sub arn:aws:lambda:${self:provider.region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-example
+            - !Sub arn:aws:lambda:${self:provider.region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-retrieve_food
             - '/invocations'
       ResourceId: !GetAtt FoodDecider.RootResourceId
       RestApiId: !Ref FoodDecider
