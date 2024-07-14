@@ -10,7 +10,7 @@ Resources:
         - AttributeName: food_type
           AttributeType: S
         - AttributeName: visited
-          AttributeType: B        
+          AttributeType: N
       KeySchema:
         - AttributeName: name
           KeyType: HASH

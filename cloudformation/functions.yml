@@ -1,5 +1,3 @@
 example:
   handler: functions/example.handler
-  # layers: 
-  #   - ${self:custom.pandasLayer}
   timeout: 60

@@ -9,7 +9,6 @@ custom:
     qa: "info"
     preprod: "info"
     prod: "error"
-  pandasLayer: arn:aws:lambda:us-west-2:336392948345:layer:AWSSDKPandas-Python310:16
   rdsName: <REPLACE_RDS_NAME>
 
 provider:
@@ -58,6 +57,11 @@ provider:
       Action:
         - "dynamodb:GetRecords"
         - "dynamodb:PutItem"
+        - "dynamodb:BatchWriteItem"
+        - "dynamodb:BatchGetItem"
+        - "dynamodb:BatchExecuteStatement"
+        - "dynamodb:Query"
+        - "dynamodb:Scan"
       Resource:
         - !Sub arn:aws:dynamodb:${self:provider.region}:${AWS::AccountId}:table/${self:service}-${self:provider.stage}-*
 functions:
