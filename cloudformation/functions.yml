@@ -1,3 +1,7 @@
 retrieve_food:
   handler: functions/retrieve_food.handler
   timeout: 60
+
+populate_table:
+  handler: functions/populate_table.handler
+  timeout: 60
