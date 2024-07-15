@@ -43,10 +43,10 @@ def handler(event, context):
     random_item = random.choice(items)
     response = {
         "statusCode": 200,
-        "body": {
-            "name": random_item['name'],
-            "menu": random_item['menu']
-            }
+        "body": json.dumps({
+            "name": random_item["name"],
+            "menu": random_item["menu"]
+            })
     }
     print(response)
     return response
