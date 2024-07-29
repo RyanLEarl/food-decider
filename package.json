@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "node": "^20.14.0",
-    "serverless": "^3.39.0"
+    "serverless": "^4.1.17"
   },
   "scripts": {
     "build-cicd": "bash ./pipeline/run-cicd.sh $npm_package_name create $npm_config_stage",
